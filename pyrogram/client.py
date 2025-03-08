@@ -289,7 +289,8 @@ class Client(Methods):
         init_connection_params: Optional["raw.base.JSONValue"] = None,
         connection_factory: Type[Connection] = Connection,
         protocol_factory: Type[TCP] = TCPAbridged,
-        loop: Optional[asyncio.AbstractEventLoop] = None
+        loop: Optional[asyncio.AbstractEventLoop] = None,
+        disable_handle_updates: Optional[bool] = None
     ):
         super().__init__()
 
@@ -329,6 +330,7 @@ class Client(Methods):
         self.init_connection_params = init_connection_params
         self.connection_factory = connection_factory
         self.protocol_factory = protocol_factory
+        self.disable_handle_updates = disable_handle_updates
 
         self.executor = ThreadPoolExecutor(self.workers, thread_name_prefix="Handler")
 
@@ -655,6 +657,9 @@ class Client(Methods):
         return is_min
 
     async def handle_updates(self, updates):
+        if self.disable_handle_updates:
+            return
+
         self.last_update_time = datetime.now()
 
         if isinstance(updates, (raw.types.Updates, raw.types.UpdatesCombined)):
