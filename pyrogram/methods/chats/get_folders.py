@@ -15,7 +15,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
-
+from asyncio import sleep
 from typing import Union, List, Iterable
 
 import pyrogram
@@ -79,6 +79,8 @@ class GetFolders:
             )
             users.update({i.id: i for i in r.users})
             chats.update({i.id: i for i in r.chats})
+
+            await sleep(0.05)
 
         folders = types.List(types.Folder._parse(self, folder, users, chats) for folder in raw_folders)
 
