@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 
 class Start:
     async def start(
-        self: "pyrogram.Client",
+        self: "pyrogram.Client", *,
         use_qr: bool = False,
         except_ids: List[int] = [],
     ):
@@ -58,18 +58,19 @@ class Start:
         Example:
             .. code-block:: python
 
-                from pyrogram import Client
+                import asyncio
 
-                app = Client("my_account")
+                from pyrogram import Client
 
 
                 async def main():
+                    app = Client("my_account")
+
                     await app.start()
                     ...  # Invoke API methods
                     await app.stop()
 
-
-                app.run(main())
+                asyncio.run(main())
         """
         is_authorized = await self.connect()
 

@@ -27,6 +27,7 @@ from .client_platform import ClientPlatform
 from .folder_color import FolderColor
 from .message_entity_type import MessageEntityType
 from .message_media_type import MessageMediaType
+from .message_origin_type import MessageOriginType
 from .message_service_type import MessageServiceType
 from .messages_filter import MessagesFilter
 from .next_code_type import NextCodeType
@@ -35,6 +36,7 @@ from .parse_mode import ParseMode
 from .phone_call_discard_reason import PhoneCallDiscardReason
 from .poll_type import PollType
 from .privacy_key import PrivacyKey
+from .privacy_rule_type import PrivacyRuleType
 from .profile_color import ProfileColor
 from .reply_color import ReplyColor
 from .sent_code_type import SentCodeType
@@ -55,6 +57,7 @@ __all__ = [
     'FolderColor',
     'MessageEntityType',
     'MessageMediaType',
+    'MessageOriginType',
     'MessageServiceType',
     'MessagesFilter',
     'NextCodeType',
@@ -63,6 +66,7 @@ __all__ = [
     'PhoneCallDiscardReason',
     'PollType',
     'PrivacyKey',
+    'PrivacyRuleType',
     'ProfileColor',
     'ReplyColor',
     'SentCodeType',

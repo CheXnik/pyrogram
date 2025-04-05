@@ -117,7 +117,7 @@ class Chat(Object):
         stories (List of :obj:`~pyrogram.types.Story`, *optional*):
             The list of chat's stories if available.
 
-        wallpaper (:obj:`~pyrogram.types.Document`, *optional*):
+        chat_background (:obj:`~pyrogram.types.ChatBackground`, *optional*):
             Chat wallpaper.
 
         bio (``str``, *optional*):
@@ -439,6 +439,14 @@ class Chat(Object):
             True, if paid messages are available in this chat.
             Returned only in :meth:`~pyrogram.Client.get_chat`
 
+        display_gifts_button (``bool``, *optional*):
+            True, if the gift button should be shown in the message input field for both participants in all chats.
+            Returned only in :meth:`~pyrogram.Client.get_chat`
+
+        allowed_gifts (:obj:`~pyrogram.types.AllowedGiftsSettings`, *optional*):
+            Information about gifts that can be received by the user.
+            Returned only in :meth:`~pyrogram.Client.get_chat`
+
         raw (:obj:`~pyrogram.raw.types.UserFull` | :obj:`~pyrogram.raw.types.ChatFull` | :obj:`~pyrogram.raw.types.ChannelFull`, *optional*):
             The raw chat or user object, as received from the Telegram API.
 
@@ -479,7 +487,7 @@ class Chat(Object):
         last_name: Optional[str] = None,
         photo: Optional["types.ChatPhoto"] = None,
         stories: Optional[List["types.Story"]] = None,
-        wallpaper: Optional["types.Document"] = None,
+        chat_background: Optional["types.ChatBackground"] = None,
         bio: Optional[str] = None,
         description: Optional[str] = None,
         dc_id: Optional[int] = None,
@@ -565,6 +573,8 @@ class Chat(Object):
         view_forum_as_messages: Optional[bool] = None,
         paid_message_star_count: Optional[int] = None,
         is_paid_messages_available: Optional[bool] = None,
+        display_gifts_button: Optional[bool] = None,
+        allowed_gifts: Optional["types.AllowedGiftsSettings"] = None,
         raw: Optional[Union["raw.types.UserFull", "raw.types.ChatFull", "raw.types.ChannelFull"]] = None
     ):
         super().__init__(client)
@@ -598,7 +608,7 @@ class Chat(Object):
         self.last_name = last_name
         self.photo = photo
         self.stories = stories
-        self.wallpaper = wallpaper
+        self.chat_background = chat_background
         self.bio = bio
         self.description = description
         self.dc_id = dc_id
@@ -684,6 +694,8 @@ class Chat(Object):
         self.view_forum_as_messages = view_forum_as_messages
         self.paid_message_star_count = paid_message_star_count
         self.is_paid_messages_available = is_paid_messages_available
+        self.display_gifts_button = display_gifts_button
+        self.allowed_gifts = allowed_gifts
         self.raw = raw
 
     @staticmethod
@@ -885,15 +897,14 @@ class Chat(Object):
         parsed_chat.bot_group_admin_rights = types.ChatPrivileges._parse(getattr(user, "bot_group_admin_rights", None))
         parsed_chat.bot_broadcast_admin_rights = types.ChatPrivileges._parse(getattr(user, "bot_broadcast_admin_rights", None))
         # parsed_chat.premium_gifts
+        parsed_chat.chat_background = types.ChatBackground._parse(client, getattr(user, "wallpaper", None))
 
-        if user.wallpaper and isinstance(user.wallpaper, raw.types.WallPaper):
-            parsed_chat.wallpaper = types.Document._parse(client, user.wallpaper.document, "wallpaper.jpg")
 
         if user.stories:
             parsed_chat.stories = types.List(
                 [
                     await types.Story._parse(
-                        client, story, users, chats, user.stories.peer
+                        client, story, user.stories.peer, users, chats
                     )
                     for story in user.stories.stories
                 ]
@@ -921,6 +932,8 @@ class Chat(Object):
             users
         )
         parsed_chat.paid_message_star_count = getattr(user, "send_paid_messages_stars", None)
+        parsed_chat.display_gifts_button = user.display_gifts_button
+        parsed_chat.allowed_gifts = types.AllowedGiftsSettings._parse(getattr(user, "disallowed_gifts", None))
 
         return parsed_chat
 
@@ -1049,9 +1062,7 @@ class Chat(Object):
                 ]
             ) or None
 
-        if channel.wallpaper and isinstance(channel.wallpaper, raw.types.WallPaper):
-            parsed_chat.wallpaper = types.Document._parse(client, channel.wallpaper.document, "wallpaper.jpg")
-
+        parsed_chat.chat_background = types.ChatBackground._parse(client, getattr(channel, "wallpaper", None))
         parsed_chat.boosts_applied = getattr(channel, "boosts_applied", None)
         parsed_chat.unrestrict_boost_count = getattr(channel, "boosts_unrestrict", None)
         parsed_chat.custom_emoji_sticker_set_name = getattr(channel.emojiset, "short_name", None)
