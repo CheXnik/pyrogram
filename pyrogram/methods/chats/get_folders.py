@@ -71,6 +71,7 @@ class GetFolders:
         users = {}
         chats = {}
         for i in range(0, len(raw_peers), 100):
+            await sleep(0.1)
             chunk = list(raw_peers.values())[i:i + 100]
             r = await self.invoke(
                 raw.functions.messages.GetPeerDialogs(
@@ -79,8 +80,6 @@ class GetFolders:
             )
             users.update({i.id: i for i in r.users})
             chats.update({i.id: i for i in r.chats})
-
-            await sleep(0.05)
 
         folders = types.List(types.Folder._parse(self, folder, users, chats) for folder in raw_folders)
 
